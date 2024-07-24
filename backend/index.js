@@ -1,14 +1,34 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import authRoutes from './routes/authRoutes';
+import cors from 'cors'
+import cookieParser from 'cookie-parser';
 
-async function connect_db(){
+async function get_db(){
     try {
-        await mongoose.connect('mongodb://localhost:27017/fitness_tracker');
-        console.info('Connected to the database');
+        await mongoose.connect("mongodb://127.0.0.1:27017/fitness");
+        console.info("database connected");
     } catch (error) {
-        console.error('Error connecting to the database', error);
+        console.error(error);
     }
 }
+get_db();
+
+const PORT = process.env.PORT || 3000;
 
 const app = express();
-app.use(express.json())
+
+app.use(cors(
+    {
+        origin:"http://localhost:5173",
+        credentials: true,
+    }
+))
+app.use(cookieParser())
+app.use(express.json());
+app.use('/uploads', express.static('uploads'));
+app.use('/api/auth', authRoutes);
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});

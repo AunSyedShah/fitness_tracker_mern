@@ -1,19 +1,23 @@
-import { Schema, model } from "mongoose";
+import mongoose from 'mongoose';
 
-// username and password, required true, username unique, trim true
+const { Schema, model } = mongoose;
+
 const userAuthSchema = new Schema({
-    username: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true
-    },
-    password: {
-        type: String,
-        required: true
-    }
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  userProfile: {
+    type: Schema.Types.ObjectId,
+    ref: 'UserProfile',
+  },
 });
 
-// export the model
 const UserAuth = model('UserAuth', userAuthSchema);
-export default UserAuth; 
+
+export default UserAuth;
