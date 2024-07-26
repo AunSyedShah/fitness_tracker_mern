@@ -82,14 +82,14 @@ authRoutes.post('/login', async (req, res) => {
             { expiresIn: '1h' } // Token expires in 1 hour
         );
 
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // Set to true in production
-            sameSite: 'strict',
-            maxAge: 3600000 // 1 hour
-        });
+        // res.cookie('token', token, {
+        //     httpOnly: true,
+        //     secure: process.env.NODE_ENV === 'production', // Set to true in production
+        //     sameSite: 'strict',
+        //     maxAge: 3600000 // 1 hour
+        // });
 
-        res.status(200).json({ message: 'Login successful' });
+        res.status(200).json({ message: 'Login successful', token });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });

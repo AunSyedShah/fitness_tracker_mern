@@ -13,20 +13,22 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-const userProfileRouter = Router();
+const userProfileRoutes = Router();
 
 // GET /userProfile
-userProfileRouter.get('/', async (req, res) => {
+userProfileRoutes.get('/', async (req, res) => {
     try {
-        const userProfiles = await UserProfile.find().populate('user');
+        // exclude userAuth
+        const userProfiles = await UserProfile.find({}, { userAuth: 0 });
         res.json(userProfiles);
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: error.message });
     }
 });
 
 // GET /userProfile/:id
-userProfileRouter.get('/:id', async (req, res) => {
+userProfileRoutes.get('/:id', async (req, res) => {
     try {
         const userProfile = await UserProfile.findById(req.params.id).populate('user');
         if (userProfile === null) {
@@ -40,7 +42,7 @@ userProfileRouter.get('/:id', async (req, res) => {
 });
 
 // POST /userProfile
-userProfileRouter.post('/', async (req, res) => {
+userProfileRoutes.post('/', async (req, res) => {
     const userProfile = new UserProfile({
         name: req.body.name,
         email: req.body.email,
@@ -56,7 +58,7 @@ userProfileRouter.post('/', async (req, res) => {
 });
 
 // PUT /userProfile/:id, use multer to upload a file
-userProfileRouter.put('/:id', upload.single('profile_picture'), async (req, res) => {
+userProfileRoutes.put('/:id', upload.single('profile_picture'), async (req, res) => {
     try {
         const userProfile = await UserProfile.findById(req.params.id);
         if (userProfile === null) {
@@ -76,7 +78,7 @@ userProfileRouter.put('/:id', upload.single('profile_picture'), async (req, res)
 });
 
 // DELETE /userProfile/:id
-userProfileRouter.delete('/:id', async (req, res) => {
+userProfileRoutes.delete('/:id', async (req, res) => {
     try {
         const userProfile = await UserProfile.findById(req.params.id);
         if (userProfile === null) {
@@ -88,3 +90,5 @@ userProfileRouter.delete('/:id', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
+export default userProfileRoutes;
