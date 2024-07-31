@@ -3,8 +3,11 @@ import React from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: {
@@ -20,9 +23,11 @@ const Login = () => {
         const response = await axios.post('http://localhost:3000/api/auth/login', values, {
           withCredentials: true, // Important for cookie-based authentication
         });
-        localStorage.setItem("isLoggedIn", true);
-        console.log(response.data.message); // Handle success (e.g., redirect or show a success message)
+        localStorage.setItem("isLoggedIn", "true");
+        // save token in local storage
+        localStorage.setItem("token", response.data.token);
         // Redirect or update UI
+        navigate('/dashboard');
       } catch (error) {
         if (error.response && error.response.data) {
           setErrors({ api: error.response.data.message });

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import UserProfile from "../models/userProfile";
 import multer from "multer";
+import jwt from "jsonwebtoken";
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -19,7 +20,10 @@ const userProfileRoutes = Router();
 userProfileRoutes.get('/', async (req, res) => {
     try {
         // exclude userAuth
-        const userProfiles = await UserProfile.find({}, { userAuth: 0 });
+        // get token from request header bearer token
+        const token = req.headers.authorization.split(' ')[1];
+        const { userId } = jwt.verify(token, process.env.JWT_SECRET);
+        const userProfiles = await UserProfile.findOne({ userAuth: userId }, { userAuth: 0 });
         res.json(userProfiles);
     } catch (error) {
         console.error(error);
